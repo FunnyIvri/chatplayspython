@@ -3,9 +3,13 @@ simple python script to allow twitch chat to code in python
 the code that twitch chat writes isnt excuted immeditaly but stored in another python file.
 ## Setup:
 put project in folder
+
 create venv
+
 run `pip install -r requirements.txt`
+
 inside the config folder create a file named .env
+
 config/.env:
 ```
 Client_ID = 'CLIENTID'
