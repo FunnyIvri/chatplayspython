@@ -5,6 +5,7 @@ from warnings import warn
 from dotenv import load_dotenv
 from inspect import signature
 
+
 class Config():
     def __init__(self, configFileName, default) -> None:
         self.configFileName = configFileName
@@ -13,7 +14,8 @@ class Config():
             if input(f'Config File {self.configFileName} Not Found would you like for it to be created?(Y,N): ').lower() == 'y':
                 open(self.configFileName, 'x').close()
                 self.reset()
-            else: return False
+            else:
+                return False
         else:
             configFile = open(self.configFileName, 'r')
             config = load(configFile)
@@ -150,17 +152,17 @@ class Bot(commands.Bot):
             await ctx.send(f'added {amount} new lines')
 
     @commands.command(name='print')
-    async def printer(self, ctx: commands.Context, *, text: str):
+    async def printer(self, ctx: commands.Context, *, thing: str):
         """Create a print statment"""
-        if not text in self.config.readConfig()['varibleNames']:
-            text = self.autoString(text)
-        self.writeToCode(f'print({text})', userCredits=ctx.author.name)
-        await ctx.send(f'print({text})')
+        if not thing in self.config.readConfig()['varibleNames']:
+            thing = self.autoString(thing)
+        self.writeToCode(f'print({thing})', userCredits=ctx.author.name)
+        await ctx.send(f'print({thing})')
 
     @commands.command(name='if')
     async def ifCreator(self, ctx: commands.Context, thing1: str, operator: str, thing2: str):
         """Create a if statment"""
-        operators = ['==', '!=', '>', '<', '>=', "<="]
+        operators = ['==', '!=', '>', '<', '>=', '<=']
         if operator in operators:
             if not thing1 in self.config.readConfig()['varibleNames']:
                 thing1 = self.autoString(thing1)
@@ -188,7 +190,8 @@ class Bot(commands.Bot):
         for i, paramter in enumerate(paramters):
             paramters[i] = self.nameCorrecter(paramter)
             self.config.appendConfigArray('varibleNames', paramter)
-        self.writeToCode(f'def {funcname}({", ".join(paramters)}):', userCredits=ctx.author.name)
+        self.writeToCode(
+            f'def {funcname}({", ".join(paramters)}):', userCredits=ctx.author.name)
         self.config.setConfig(
             'currentIndent', self.config.readConfig()['currentIndent']+1)
         self.config.appendConfigArray('funcithonNames', funcname)
@@ -204,7 +207,8 @@ class Bot(commands.Bot):
             for i, paramter in enumerate(paramters):
                 if not paramter in config['varibleNames']:
                     paramters[i] = self.autoString(paramter)
-            self.writeToCode(f'{funcname}({", ".join(paramters)})', userCredits=ctx.author.name)
+            self.writeToCode(
+                f'{funcname}({", ".join(paramters)})', userCredits=ctx.author.name)
             await ctx.send(f'{funcname}({", ".join(paramters)})')
         else:
             await ctx.send(f'funcithon {funcname} is invalid use one of the existing funcithons or create your own with !def, existing funcithons: {", ".join(config["funcithonNames"])}')
@@ -212,7 +216,7 @@ class Bot(commands.Bot):
     @commands.command(name='while')
     async def whileCreator(self, ctx: commands.Context, thing1: str, operator: str, thing2: str):
         """Create a While Loop"""
-        operators = ['==', '!=', '>', '<', '>=', "<="]
+        operators = ['==', '!=', '>', '<', '>=', '<=']
         if operator in operators:
             if not thing1 in self.config.readConfig()['varibleNames']:
                 thing1 = self.autoString(thing1)
@@ -225,12 +229,13 @@ class Bot(commands.Bot):
             await ctx.send(f'while {thing1} {operator} {thing2}:')
         else:
             await ctx.send(f'operator {operator} is invalid, allowed operators: {", ".join(operators)}')
-    @commands.command(name='math', aliases=('calc','mathmatics','oneplusone'))
+
+    @commands.command(name='math', aliases=('calc', 'mathmatics', 'oneplusone'))
     async def mathCreator(self, ctx: commands.Context, thing1: str, operator: str, thing2: str):
         """Create a Math Statment with the result going to thing1"""
-        operators = ['+', '-', '*', '/', '%', "**", "//"]
+        operators = ['+', '-', '*', '/', '%', '**', '//']
         config = self.config.readConfig()
-        if thing1 in config['varibleNames']:  
+        if thing1 in config['varibleNames']:
             if operator in operators:
                 if not thing2 in config['varibleNames']:
                     thing2 = self.autoString(thing2)
@@ -241,16 +246,19 @@ class Bot(commands.Bot):
                 await ctx.send(f'operator {operator} is invalid, allowed operators: {", ".join(operators)}')
         else:
             await ctx.send(f'thing1 must be a varible {thing1} is not an varible you can create a new one or use any of the prexisting ones, existing varibles: {", ".join(config["varibleNames"])}')
+
     @commands.command(name='help')
     async def helpy(self, ctx: commands.Context):
         """Display this help message."""
         for command_name, command_obj in self.commands.items():
             cmd_signature = signature(command_obj._callback)
-            params = " ".join([f"<{param}>" for param in cmd_signature.parameters if param not in ['self', 'ctx']])
+            params = " ".join(
+                [f"<{param}>" for param in cmd_signature.parameters if param not in ['self', 'ctx']])
             command_help = f"!{command_name} {params} - {command_obj._callback.__doc__}"
-            
+
             # Send each command's help message individually
             await ctx.send(command_help)
+
     def autoString(self, string: str) -> str:
         string = string.replace("'", "")
         string = string.replace('"', "")
