@@ -20,9 +20,13 @@ Target_File = 'chaos.py'
 Title = 'TITLE'
 ```
 replace `CLIENTID` with your bots client id
+
 replace `TOKEN` with your bots Token
+
 replace `CHANNELNAME` with your channels named
+
 replace `TITLE` with the title that will appear at the top of the file
+
 you can replace `chaos.py` with the name you want of the file twitch chat will be coding in
 
 run main.py
